@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  phone         String    @unique
+  pin           String?
+  profilePhoto  String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  lastLogin     DateTime? @map("last_login")
+  bookings      Booking[]
+  role          Role      @default(USER)
+  latitude      Float?
+  longitude     Float?
+  lastLocation  DateTime? @map("last_location_update")
+
+  @@map("users")
+}
+
+model Vehicle {
+  id            String    @id @default(uuid())
+  type          VehicleType
+  totalSeats    Int       @map("total_seats")
+  availableSeats Int      @map("available_seats")
+  latitude      Float
+  longitude     Float
+  status        VehicleStatus @default(IDLE)
+  lastUpdate    DateTime  @default(now()) @map("last_update")
+  driverId      String?   @map("driver_id")
+  driverName    String?   @map("driver_name")
+  driverPhoto   String?   @map("driver_photo")
+  bookings      Booking[]
+
+  @@map("vehicles")
+}
+
+model Booking {
+  id            String    @id @default(uuid())
+  userId        String    @map("user_id")
+  vehicleId     String    @map("vehicle_id")
+  seatCount     Int       @map("seat_count")
+  startTime     DateTime  @default(now()) @map("start_time")
+  duration      Int       // in minutes
+  endTime       DateTime  @map("end_time")
+  status        BookingStatus @default(BOOKED)
+  amount        Float?
+  paymentMethod PaymentMethod?
+  paymentStatus PaymentStatus?
+  rating        Int?
+  feedback      String?
+  user          User      @relation(fields: [userId], references: [id])
+  vehicle       Vehicle   @relation(fields: [vehicleId], references: [id])
+
+  @@map("bookings")
+}
+
+enum Role {
+  USER
+  DRIVER
+  ADMIN
+}
+
+enum VehicleType {
+  AUTO
+  CAR
+  VAN
+}
+
+enum VehicleStatus {
+  IDLE
+  ENGAGED
+  OFFLINE
+}
+
+enum BookingStatus {
+  BOOKED
+  CANCELLED
+  EXPIRED
+  COMPLETED
+}
+
+enum PaymentMethod {
+  UPI
+  CASH
+  WALLET
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
