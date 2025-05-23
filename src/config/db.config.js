@@ -7,9 +7,9 @@ const logger = require('./logger.config');
 const prisma = new PrismaClient();
 
 // Initialize Supabase client
-const supabaseUrl = process.env.example.SUPABASE_URL;
-const supabaseKey = process.env.example.SUPABASE_ANON_KEY;
-const supabaseServiceKey = process.env.example.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey || !supabaseServiceKey) {
   logger.error('Missing required Supabase environment variables');
