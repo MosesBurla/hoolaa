@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
 const { createClient } = require('@supabase/supabase-js');
 const logger = require('./logger.config');
@@ -9,6 +10,11 @@ const prisma = new PrismaClient();
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey || !supabaseServiceKey) {
+  logger.error('Missing required Supabase environment variables');
+  throw new Error('Missing required Supabase environment variables. Please check your .env file.');
+}
 
 // Create Supabase client with anonymous key (for client-side operations)
 const supabase = createClient(supabaseUrl, supabaseKey);
